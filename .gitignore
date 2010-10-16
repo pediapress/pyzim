@@ -12,3 +12,6 @@
 .DS_Store
 .ropeproject
 ID
+pyzim.cpp
+/pyzim.cc
+/build/
