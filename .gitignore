@@ -1,0 +1,14 @@
+*.pyc
+*.pyo
+*.o
+*.so
+*.os
+*.pyd
+*~
+.*.swp
+.*.swo
+.*.swn
+.~
+.DS_Store
+.ropeproject
+ID
