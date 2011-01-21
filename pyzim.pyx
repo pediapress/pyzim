@@ -7,13 +7,11 @@ cdef extern from "<string>" namespace "std":
 
 cdef extern from "pyas.h":
     cdef cppclass PyArticle:
-        string url
-        string title
-        string aid
+        PyArticle(string, string, string)
 
-    ctypedef PyArticle * PyArticlePtr
     cdef cppclass PyArticleSource:
-        vector[PyArticlePtr] articles
+        PyArticleSource()
+        void push_back(PyArticle*)
 
     cdef void create(string &fname, PyArticleSource *src)
 
@@ -23,12 +21,8 @@ cdef extern from "cxxtools/log.h":
 def init_log():
     log_init()
 
-cdef PyArticle * make_article(url, title, aid):
-    cdef PyArticle *a = new PyArticle()
-    a.url = string(url)
-    a.title = string(title)
-    a.aid = string(aid)
-    return a
+cdef PyArticle* make_article(url, title, aid):
+    return new PyArticle(string(url), string(title), string(aid))
 
 
 cdef class ArticleSource:
@@ -36,19 +30,10 @@ cdef class ArticleSource:
     def __cinit__(self, articles):
         self.thisptr = new PyArticleSource()
         for x in articles:
-            self.thisptr.articles.push_back(make_article(x.url, x.title, x.aid))
+            self.thisptr.push_back(make_article(x.url, x.title, x.aid))
 
     def __dealloc__(self):
         del self.thisptr
 
     def create(self, fname):
-        create(string("bla"), self.thisptr)
-
-
-
-def doit():
-    cdef PyArticle *a = new PyArticle()
-    a.url = string("bla")
-
-    cdef PyArticleSource *src = new PyArticleSource()
-    create(string("bla.zim"), src)
+        create(string(fname), self.thisptr)
