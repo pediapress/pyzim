@@ -2,18 +2,19 @@ from libcpp.vector cimport vector
 cdef extern from "<string>" namespace "std":
     cdef cppclass string:
         string()
-        string(char *)
-        char * c_str()
+        string(char*)
+        char* c_str()
 
 cdef extern from "pyas.h":
     cdef cppclass PyArticle:
-        PyArticle(string, string, string)
+        PyArticle(char namespace, string url, string title, string aid, string redirectAid, string mimetype)
+        void setData(string)
 
     cdef cppclass PyArticleSource:
         PyArticleSource()
-        void push_back(PyArticle*)
+        void addArticle(PyArticle*)
 
-    cdef void create(string &fname, PyArticleSource *src)
+    cdef void create(string& fname, PyArticleSource* src)
 
 cdef extern from "cxxtools/log.h":
     cdef void log_init()
@@ -21,16 +22,19 @@ cdef extern from "cxxtools/log.h":
 def init_log():
     log_init()
 
-cdef PyArticle* make_article(url, title, aid):
-    return new PyArticle(string(url), string(title), string(aid))
-
 
 cdef class ArticleSource:
-    cdef PyArticleSource *thisptr
-    def __cinit__(self, articles):
+    cdef PyArticleSource* thisptr
+
+    def __cinit__(self):
         self.thisptr = new PyArticleSource()
-        for x in articles:
-            self.thisptr.push_back(make_article(x.url, x.title, x.aid))
+
+    def add_article(self, namespace, url, title, aid, redirect_aid=None, data=None, mimetype='text/html'):
+        redirect_aid = redirect_aid or ''
+        cdef PyArticle* article = new PyArticle(ord(namespace[0]), string(url), string(title), string(aid), string(redirect_aid), string(mimetype))
+        if data is not None:
+            article.setData(string(data))
+        self.thisptr.addArticle(article)
 
     def __dealloc__(self):
         del self.thisptr
