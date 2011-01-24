@@ -42,6 +42,10 @@ public:
 		return mimetype_;
 	}
 
+	bool shouldCompress() const {
+		return mimetype_ == "text/html";
+	}
+
 	std::string getRedirectAid() const {
 		return redirectAid_;
 	}
