@@ -15,6 +15,6 @@ if __name__ == '__main__':
     setup(
         name='pyzim',
         version='0.1',
-        py_modules='pyzim',
+        py_modules=['pyzim'],
         ext_modules=[ext],
     )
