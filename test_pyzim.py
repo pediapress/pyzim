@@ -9,28 +9,7 @@ lorem = u'''<div><a href="A/Redirect">Link!!!11</a> <img src="I/Test.jpg" width=
 #pyzim.init_log()
 
 
-class IterArticleSource(pyzim.ArticleSource):
-    """Be more Pythonic by implementing get_next_article() using __iter__().
-
-    (Currently, Cython does not support the yield stmt.)
-    """
-
-    def get_next_article(self):
-        if self.it is None:
-            self.it = iter(self)
-        try:
-            return self.it.next()
-        except StopIteration:
-            self.it = None
-            return None
-
-    def __iter__(self):
-        "Implement this"
-
-        yield None
-
-
-class TestArticleSource(IterArticleSource):
+class TestArticleSource(pyzim.IterArticleSource):
     def __init__(self, num_articles):
         self.num_articles = num_articles
 

@@ -3,17 +3,18 @@
 from distutils.core import setup, Extension
 
 ext = Extension(
-    "pyzim",                 # name of extension
-    ["pyzim.cpp"],     # filename of our Cython source
-    language="c++",              # this causes Cython to create C++ source
-    include_dirs=[],          # usual stuff
-    libraries=["stdc++", "zim", "zimwriter"],             # ditto
-    extra_link_args=[],       # if needed
-    )
+    '_pyzim',
+    ['_pyzim.cpp'],
+    language='c++',
+    include_dirs=[],
+    libraries=['stdc++', 'zim', 'zimwriter'],
+    extra_link_args=[],
+)
 
 if __name__ == '__main__':
     setup(
         name='pyzim',
-        version="1.0",
-        ext_modules = [ext],
-        )
+        version='0.1',
+        py_modules='pyzim',
+        ext_modules=[ext],
+    )

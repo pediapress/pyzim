@@ -1,4 +1,4 @@
-cimport pyzim
+cimport _pyzim
 
 cimport cpython.ref as cpy_ref
 

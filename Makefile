@@ -1,10 +1,10 @@
-all:: pyzim.so
+all:: _pyzim.so
 
-pyzim.cpp: pyzim.pyx pyzim.pxd
-	cython --cplus pyzim.pyx
+_pyzim.cpp: _pyzim.pyx _pyzim.pxd
+	cython --cplus _pyzim.pyx
 
-pyzim.so: pyzim.cpp pyas.h
+_pyzim.so: _pyzim.cpp pyas.h
 	python setup.py build_ext -f -i
 
 clean::
-	rm -rf build *.so
+	rm -rf build _pyzim.so _pyzim.cpp

@@ -4,14 +4,6 @@
 *.so
 *.os
 *.pyd
-*~
-.*.swp
-.*.swo
-.*.swn
-.~
-.DS_Store
-.ropeproject
 ID
-pyzim.cpp
-/pyzim.cc
+_pyzim.cpp
 /build/
