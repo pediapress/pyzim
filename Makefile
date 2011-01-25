@@ -1,6 +1,6 @@
 all:: pyzim.so
 
-pyzim.cpp: pyzim.pyx
+pyzim.cpp: pyzim.pyx pyzim.pxd
 	cython --cplus pyzim.pyx
 
 pyzim.so: pyzim.cpp pyas.h

@@ -1,40 +1,50 @@
-from libcpp.vector cimport vector
-cdef extern from "<string>" namespace "std":
-    cdef cppclass string:
-        string()
-        string(char*)
-        char* c_str()
+cimport pyzim
 
-cdef extern from "pyas.h":
-    cdef cppclass PyArticle:
-        PyArticle(char namespace, string url, string title, string aid, string redirectAid, string mimetype)
-        void setData(string)
+cimport cpython.ref as cpy_ref
 
-    cdef cppclass PyArticleSource:
-        PyArticleSource()
-        void addArticle(PyArticle*)
-
-    cdef void create(string& fname, PyArticleSource* src)
-
-cdef extern from "cxxtools/log.h":
-    cdef void log_init()
 
 def init_log():
     log_init()
+
+
+class Article(object):
+    def __init__(self, title, namespace='A', url=None, aid=None, redirect_aid=None, mimetype='text/html'):
+        assert title, 'title is requried'
+        self.title = title
+        self.aid = aid or title
+        self.url = url or title
+        self.namespace = namespace
+        self.mimetype = mimetype
+        self.redirect_aid = redirect_aid or ''
+
+
+cdef PyArticle* cy_get_next_article(PyObject* ptr):
+    cdef ArticleSource src = <ArticleSource>(ptr)
+    art = src.get_next_article()
+    if art is None:
+        return NULL
+    cdef PyArticle* pyart = new PyArticle(ord(art.namespace[0]), string(art.url), string(art.title), string(art.aid), string(art.redirect_aid), string(art.mimetype))
+    return pyart
+
+
+cdef string cy_get_data(PyObject* ptr, string aid):
+    cdef ArticleSource src = <ArticleSource>(ptr)
+    data = src.get_data(aid.c_str())
+    return string(data)
 
 
 cdef class ArticleSource:
     cdef PyArticleSource* thisptr
 
     def __cinit__(self):
-        self.thisptr = new PyArticleSource()
+        self.thisptr = new PyArticleSource(<cpy_ref.PyObject*>self, cy_get_next_article, cy_get_data)
+        self.it = None
 
-    def add_article(self, namespace, url, title, aid, redirect_aid=None, data=None, mimetype='text/html'):
-        redirect_aid = redirect_aid or ''
-        cdef PyArticle* article = new PyArticle(ord(namespace[0]), string(url), string(title), string(aid), string(redirect_aid), string(mimetype))
-        if data is not None:
-            article.setData(string(data))
-        self.thisptr.addArticle(article)
+    def get_next_article(self):
+        return None
+
+    def get_data(self, aid):
+        return 'ArticleSource.get_data() needs to be implemented!'
 
     def __dealloc__(self):
         del self.thisptr

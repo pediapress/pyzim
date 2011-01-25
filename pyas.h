@@ -2,6 +2,8 @@
 #include <zim/writer/articlesource.h>
 #include <zim/writer/zimcreator.h>
 
+#include <python.h>
+
 #include <algorithm>
 
 
@@ -50,14 +52,6 @@ public:
 		return redirectAid_;
 	}
 
-	void setData(const std::string& data) {
-		data_ = data;
-	}
-
-	zim::Blob getData() const {
-		return zim::Blob(data_.c_str(), data_.length());
-	}
-
 private:
 	char namespace_;
 	std::string url_;
@@ -83,28 +77,33 @@ private:
 
 class PyArticleSource: public zim::writer::ArticleSource {
 public:
-	PyArticleSource() : count_(0) {}
+	typedef PyArticle* (*GetNextArticle)(PyObject* obj);
+	typedef std::string (*GetData)(PyObject* obj, std::string aid);
 
-	void addArticle(const PyArticle* article) {
-		articles_.push_back(article);
+	PyArticleSource(PyObject* pyObj, GetNextArticle getNextArticle, GetData getData)
+		: pyObj_(pyObj),
+		  getNextArticle_(getNextArticle),
+		  getData_(getData) {
+		Py_XINCREF(pyObj_);
+	}
+
+	~PyArticleSource() {
+		Py_XDECREF(pyObj_);
 	}
 
 	virtual const zim::writer::Article* getNextArticle() {
-		if (count_ < articles_.size()) {
-			return articles_[count_++];
-		}
-		return 0;
+		return getNextArticle_(pyObj_);
 	}
 
 	zim::Blob getData(const std::string& aid) {
-		std::vector<const PyArticle*>::const_iterator it;
-		it = std::find_if(articles_.begin(), articles_.end(), AidCmp(aid));
-		return (*it)->getData();
+		std::string s(getData_(pyObj_, aid));
+		return zim::Blob(s.data(), s.length());
 	}
 
 private:
-	std::vector<const PyArticle*> articles_;
-	int count_;
+	PyObject* pyObj_;
+	GetNextArticle getNextArticle_;
+	GetData getData_;
 };
 
 
