@@ -60,7 +60,6 @@ class ZIPArticleSource(pyzim.IterArticleSource):
         elif article.namespace == 'I':
             fn = self.aid2article[aid].filename
             data = open(fn, 'rb').read()
-            print fn, len(data)
             return data
 
     def rewrite_links(self, root):
