@@ -4,6 +4,7 @@ cdef extern from "<string>" namespace "std":
     cdef cppclass string:
         string()
         string(char*)
+        string(char*, size_t n)
         char* c_str()
 
 cdef extern from "pyas.h":
