@@ -6,6 +6,7 @@ import os
 import shutil
 import sys
 import tempfile
+import urlparse
 
 from lxml import etree
 
@@ -53,31 +54,36 @@ class ZIPArticleSource(pyzim.IterArticleSource):
         if article.namespace == 'A':
             webpage = self.aid2article[aid].webpage
             root = webpage.tree
-            self.rewrite_links(root)
-            self.rewrite_img_srcs(root)
+            self.rewrite_links(root, webpage.url)
+            self.rewrite_img_srcs(root, webpage.url)
             self.clean_tree(root)
             return etree.tostring(root)
         elif article.namespace == 'I':
             fn = self.aid2article[aid].filename
             return open(fn, 'rb').read()
 
-    def rewrite_links(self, root):
+    def rewrite_links(self, root, articleurl):
         for a in root.xpath('//a[@title]'):
             title = a.attrib['title']
             aid = title # FIXME
             if aid in self.aid2article:
-                a.set('href', '/A/{0}'.format(title))
+                a.attrib['href'] = '/A/{0}'.format(title)
+            else:
+                a.attrib['href'] = urlparse.urljoin(articleurl, a.attrib['href'])
 
-    def rewrite_img_srcs(self, root):
+    def rewrite_img_srcs(self, root, articleurl):
         for img in root.xpath('//img'):
-            aid = src2aid(img.attrib['src'])
+            src = img.attrib['src']
+            aid = src2aid(src)
             if aid in self.aid2article:
                 img.attrib['src'] = '/I/{0}'.format(aid)
+            else:
+                img.attrib['src'] = urlparse.urljoin(articleurl, src)
 
     def clean_tree(self, root):
         for node in root.xpath('//*[contains(@class, "editsection")]'):
             p = node.getparent()
-            if p:
+            if p is not None:
                 p.remove(node)
 
 
