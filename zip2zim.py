@@ -18,7 +18,6 @@ def src2aid(src):
     return sha1(src).hexdigest()
 
 
-
 class ZIPArticleSource(pyzim.IterArticleSource):
     def __init__(self, zipfn):
         self.tmpdir = tempfile.mkdtemp()
@@ -56,6 +55,7 @@ class ZIPArticleSource(pyzim.IterArticleSource):
             root = webpage.tree
             self.rewrite_links(root)
             self.rewrite_img_srcs(root)
+            self.clean_tree(root)
             return etree.tostring(root)
         elif article.namespace == 'I':
             fn = self.aid2article[aid].filename
@@ -73,6 +73,12 @@ class ZIPArticleSource(pyzim.IterArticleSource):
             aid = src2aid(img.attrib['src'])
             if aid in self.aid2article:
                 img.attrib['src'] = '/I/{0}'.format(aid)
+
+    def clean_tree(self, root):
+        for node in root.xpath('//*[contains(@class, "editsection")]'):
+            p = node.getparent()
+            if p:
+                p.remove(node)
 
 
 def zip2zim(zipfn, zimfn):
