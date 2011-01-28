@@ -78,7 +78,7 @@ private:
 class PyArticleSource: public zim::writer::ArticleSource {
 public:
 	typedef PyArticle* (*GetNextArticle)(PyObject* obj);
-	typedef std::string (*GetData)(PyObject* obj, std::string aid);
+	typedef zim::Blob (*GetData)(PyObject* obj, std::string aid);
 
 	PyArticleSource(PyObject* pyObj, GetNextArticle getNextArticle, GetData getData)
 		: pyObj_(pyObj),
@@ -96,8 +96,7 @@ public:
 	}
 
 	zim::Blob getData(const std::string& aid) {
-		std::string s(getData_(pyObj_, aid));
-		return zim::Blob(s.data(), s.length());
+		return getData_(pyObj_, aid);
 	}
 
 private:

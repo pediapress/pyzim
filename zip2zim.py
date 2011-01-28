@@ -59,8 +59,7 @@ class ZIPArticleSource(pyzim.IterArticleSource):
             return etree.tostring(root)
         elif article.namespace == 'I':
             fn = self.aid2article[aid].filename
-            data = open(fn, 'rb').read()
-            return data
+            return open(fn, 'rb').read()
 
     def rewrite_links(self, root):
         for a in root.xpath('//a[@title]'):
