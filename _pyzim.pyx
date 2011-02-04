@@ -27,10 +27,10 @@ cdef PyArticle* cy_get_next_article(PyObject* ptr):
     return pyart
 
 
-cdef Blob cy_get_data(PyObject* ptr, string aid):
+cdef string cy_get_data(PyObject* ptr, string aid):
     cdef ArticleSource src = <ArticleSource>(ptr)
     data = src.get_data(aid.c_str())
-    return Blob(data, len(data))
+    return string(data, len(data))
 
 
 cdef class ArticleSource:

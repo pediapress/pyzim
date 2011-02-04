@@ -15,6 +15,8 @@ import pyzim
 
 
 
+pyzim.init_log()
+
 def src2aid(src):
     return sha1(src).hexdigest()
 

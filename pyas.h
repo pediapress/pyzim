@@ -78,12 +78,13 @@ private:
 class PyArticleSource: public zim::writer::ArticleSource {
 public:
 	typedef PyArticle* (*GetNextArticle)(PyObject* obj);
-	typedef zim::Blob (*GetData)(PyObject* obj, std::string aid);
+	typedef std::string (*GetData)(PyObject* obj, std::string aid);
 
 	PyArticleSource(PyObject* pyObj, GetNextArticle getNextArticle, GetData getData)
 		: pyObj_(pyObj),
 		  getNextArticle_(getNextArticle),
-		  getData_(getData) {
+		  getData_(getData),
+       		  currentData_("") {
 		Py_XINCREF(pyObj_);
 	}
 
@@ -96,13 +97,15 @@ public:
 	}
 
 	zim::Blob getData(const std::string& aid) {
-		return getData_(pyObj_, aid);
+		currentData_ = getData_(pyObj_, aid);
+		return zim::Blob(currentData_.data(), currentData_.length());
 	}
 
 private:
 	PyObject* pyObj_;
 	GetNextArticle getNextArticle_;
 	GetData getData_;
+	std::string currentData_;
 };
 
 
