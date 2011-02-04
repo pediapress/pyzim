@@ -2,7 +2,7 @@
 #include <zim/writer/articlesource.h>
 #include <zim/writer/zimcreator.h>
 
-#include <python.h>
+#include <Python.h>
 
 #include <algorithm>
 
