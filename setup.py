@@ -5,11 +5,22 @@ from distutils.core import setup, Extension
 from distutils.command.build_ext import build_ext as _build_ext
 from distutils.command.sdist import sdist as _sdist
 
+
+def get_version():
+    d = {}
+    try:
+        execfile("pyzim.py", d, d)
+    except (ImportError, RuntimeError):
+        pass
+    return d["__version__"]
+
+
 class sdist(_sdist):
     def run(self):
         if os.path.exists("Makefile"):
             os.system("make _pyzim.cpp")
         _sdist.run(self)
+
 
 class build_ext(_build_ext):
     def run(self):
@@ -44,7 +55,7 @@ ext = Extension(
 if __name__ == '__main__':
     setup(
         name='pyzim',
-        version='0.2',
+        version=get_version(),
         py_modules=['pyzim'],
         ext_modules=[ext],
         cmdclass=dict(build_ext=build_ext, sdist=sdist))

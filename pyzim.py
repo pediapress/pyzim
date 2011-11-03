@@ -1,4 +1,8 @@
+__version_info__ = (0, 2, 0)
+version = __version__ = "0.2.0"
+
 from _pyzim import init_log, ArticleSource, Article
+
 
 class IterArticleSource(ArticleSource):
     """Be more Pythonic by implementing get_next_article() using __iter__().
