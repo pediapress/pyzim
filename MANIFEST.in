@@ -1,0 +1,12 @@
+include MANIFEST.in
+include _pyzim.pxd
+include _pyzim.pyx
+include log.properties
+include pyas.h
+include pyzim.py
+include setup.cfg
+include setup.py
+include test_pyzim.py
+include vendor
+include zip2zim.py
+recursive-include vendor *
