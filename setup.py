@@ -58,4 +58,7 @@ if __name__ == '__main__':
         version=get_version(),
         py_modules=['pyzim'],
         ext_modules=[ext],
+        maintainer="pediapress.com",
+        maintainer_email="info@pediapress.com",
+        url="https://github.com/pediapress/pyzim",
         cmdclass=dict(build_ext=build_ext, sdist=sdist))
