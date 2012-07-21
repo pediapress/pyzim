@@ -4,6 +4,9 @@ import os
 from distutils.core import setup, Extension
 from distutils.command.build_ext import build_ext as _build_ext
 from distutils.command.sdist import sdist as _sdist
+from distutils.util import strtobool
+
+EMBED = strtobool(os.environ.get("EMBED", "1"))
 
 
 def get_version():
@@ -27,7 +30,7 @@ class build_ext(_build_ext):
         if os.path.exists("Makefile"):
             os.system("make _pyzim.cpp")
 
-        if os.path.exists("vendor/Makefile"):
+        if EMBED and os.path.exists("vendor/Makefile"):
             bdir = os.path.abspath(self.build_temp)
             os.environ["BUILD"] = bdir
             if "MAKE" not in os.environ:
