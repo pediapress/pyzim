@@ -31,11 +31,12 @@ class build_ext(_build_ext):
             os.system("make _pyzim.cpp")
 
         if EMBED and os.path.exists("vendor/Makefile"):
+            target = os.environ.get("PP_TARGET", "all")
             bdir = os.path.abspath(self.build_temp)
             os.environ["BUILD"] = bdir
             if "MAKE" not in os.environ:
                 os.environ["MAKE"] = "make"
-            err = os.system("cd vendor; $MAKE -j1")
+            err = os.system("cd vendor; $MAKE -j1 %s" % target)
             assert err == 0, "make failed"
             if self.include_dirs is None:
                 self.include_dirs = []
