@@ -1,4 +1,6 @@
 
+# cython: embedsignature=True
+
 from cpython.ref cimport PyObject
 
 cimport cpython.ref as cpy_ref
