@@ -112,11 +112,6 @@ private:
 void create(const std::string& fname, PyArticleSource* src) {
     int argc = 0;
 
-    try {
-        zim::writer::ZimCreator creator(argc, (char**)0);
-        creator.create(fname, *src);
-    }
-    catch (std::exception& e) {
-        std::cerr << "exception called:" << e.what() << std::endl;
-    }
+    zim::writer::ZimCreator creator(argc, (char**)0);
+    creator.create(fname, *src);
 }

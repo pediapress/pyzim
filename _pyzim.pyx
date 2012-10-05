@@ -7,7 +7,7 @@ from libcpp.string cimport string
 
 
 cdef extern from "cxxtools/log.h":
-    cdef void log_init()
+    cdef void log_init() except +
 
 
 cdef extern from "pyas.h":
@@ -20,7 +20,7 @@ cdef extern from "pyas.h":
     cdef cppclass PyArticleSource:
         PyArticleSource(PyObject*, GetNextArticle, GetData)
 
-    cdef void create(string& fname, PyArticleSource* src)
+    cdef void create(string& fname, PyArticleSource* src) except +
 
 
 def init_log():
