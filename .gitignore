@@ -10,3 +10,5 @@ _pyzim.cpp
 /MANIFEST
 /dist/
 /pyzim.egg-info/
+__pycache__/
+.ropeproject/
