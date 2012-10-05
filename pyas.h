@@ -101,6 +101,12 @@ public:
         return zim::Blob(currentData_.data(), currentData_.length());
     }
 
+    std::string getMainPage() {
+        return mainPage;
+    }
+
+    std::string mainPage;
+
 private:
     PyObject* pyObj_;
     GetNextArticle getNextArticle_;

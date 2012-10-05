@@ -21,6 +21,7 @@ cdef extern from "pyas.h":
 
     cdef cppclass PyArticleSource:
         PyArticleSource(PyObject*, GetNextArticle, GetData)
+        string mainPage
 
     cdef void create(string& fname, PyArticleSource* src) except +
 
@@ -56,10 +57,10 @@ cdef string cy_get_data(PyObject* ptr, string aid):
 
 
 cdef class ArticleSource:
-    cdef PyArticleSource* thisptr
+    cdef PyArticleSource* _ptr
 
     def __cinit__(self):
-        self.thisptr = new PyArticleSource(<cpy_ref.PyObject*>self, cy_get_next_article, cy_get_data)
+        self._ptr = new PyArticleSource(<cpy_ref.PyObject*>self, cy_get_next_article, cy_get_data)
         self.it = None
 
     def get_next_article(self):
@@ -69,11 +70,16 @@ cdef class ArticleSource:
         return 'ArticleSource.get_data() needs to be implemented!'
 
     def __dealloc__(self):
-        del self.thisptr
+        del self._ptr
 
     def create(self, fname):
-        create(fname, self.thisptr)
+        create(fname, self._ptr)
 
+    property mainPage:
+        def __get__(self):
+            return self._ptr.mainPage
+        def __set__(self, val):
+            self._ptr.mainPage = val
 
 cdef extern from "zim/file.h":
    cdef cppclass _zimfile "zim::File":
