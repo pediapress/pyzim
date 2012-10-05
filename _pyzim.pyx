@@ -1,7 +1,8 @@
 cimport _pyzim
 
 cimport cpython.ref as cpy_ref
-
+from libcpp cimport bool
+from libcpp.string cimport string as stdstring
 
 def init_log():
     log_init()
@@ -51,3 +52,25 @@ cdef class ArticleSource:
 
     def create(self, fname):
         create(string(fname), self.thisptr)
+
+
+cdef extern from "zim/file.h":
+   cdef cppclass _zimfile "zim::File":
+       _zimfile(char *) except +
+       bool verify() except +
+       stdstring getChecksum() except +
+
+cdef class zimfile(object):
+    cdef _zimfile *_ptr
+    def __cinit__(self, fn):
+        self._ptr = new _zimfile(fn)
+
+    def __dealloc__(self):
+        del self._ptr
+
+    def verify(self):
+        return self._ptr.verify()
+
+    @property
+    def checksum(self):
+        return self._ptr.getChecksum()

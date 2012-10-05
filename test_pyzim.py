@@ -30,3 +30,7 @@ class TestArticleSource(pyzim.IterArticleSource):
 def test_create():
     src = TestArticleSource(100)
     src.create('test.zim')
+    zf = pyzim.zimfile("test.zim")
+    print "checksum:", zf.checksum
+    zf.verify()
+

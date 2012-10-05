@@ -1,7 +1,7 @@
 __version_info__ = (0, 2, 1)
 version = __version__ = "0.2.1"
 
-from _pyzim import init_log, ArticleSource, Article
+from _pyzim import init_log, ArticleSource, Article, zimfile
 
 
 class IterArticleSource(ArticleSource):
