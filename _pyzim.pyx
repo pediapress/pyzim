@@ -3,17 +3,12 @@ from cpython.ref cimport PyObject
 
 cimport cpython.ref as cpy_ref
 from libcpp cimport bool
-from libcpp.string cimport string as stdstring
+from libcpp.string cimport string
 
-cdef extern from "<string>" namespace "std":
-    cdef cppclass string:
-        string()
-        string(char*)
-        string(char*, size_t n)
-        char* c_str()
 
 cdef extern from "cxxtools/log.h":
     cdef void log_init()
+
 
 cdef extern from "pyas.h":
     cdef cppclass PyArticle:
@@ -48,14 +43,14 @@ cdef PyArticle* cy_get_next_article(PyObject* ptr):
     art = src.get_next_article()
     if art is None:
         return NULL
-    cdef PyArticle* pyart = new PyArticle(ord(art.namespace[0]), string(art.url), string(art.title), string(art.aid), string(art.redirect_aid), string(art.mimetype))
+    cdef PyArticle* pyart = new PyArticle(ord(art.namespace[0]), art.url, art.title, art.aid, art.redirect_aid, art.mimetype)
     return pyart
 
 
 cdef string cy_get_data(PyObject* ptr, string aid):
     cdef ArticleSource src = <ArticleSource>(ptr)
     data = src.get_data(aid.c_str())
-    return string(data, len(data))
+    return data
 
 
 cdef class ArticleSource:
@@ -75,14 +70,14 @@ cdef class ArticleSource:
         del self.thisptr
 
     def create(self, fname):
-        create(string(fname), self.thisptr)
+        create(fname, self.thisptr)
 
 
 cdef extern from "zim/file.h":
    cdef cppclass _zimfile "zim::File":
        _zimfile(char *) except +
        bool verify() except +
-       stdstring getChecksum() except +
+       string getChecksum() except +
 
 cdef class zimfile(object):
     cdef _zimfile *_ptr
